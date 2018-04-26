@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <h1>ブラックジャック</h1>
+    <?
+    //準備
+      var _room = getRoom();
+      _room.load();
+    　　 var _gameManager = _room.gameManager;
+      var _dealer = _gameManager.dealer;
+    ?>
+    <div>ルーム:<?= getParameter().rid ?></div>
+    <hr>
+    <div>残り<?= _gameManager.dealer.stack.cards.length ?>枚</div>
+    <hr>
+    <div>ディーラー</div>
+    <?
+    //ディーラー状態
+      output.append('<div>枚数:' + _dealer.hand.cards.length + '</div>');
+      output.append('<div>');
+      var _array = [];
+      for(var i = 0; i < _dealer.hand.cards.length; i++) {
+        _array.push(_dealer.hand.cards[i].nameFull());
+      }
+      output.append(_array.join(' | '));
+      output.append('<div>');
+      var _dealerPoints = _gameManager.calcHandsValues(_dealer.hand);
+      var _pointArray = [];
+      for(var i = 0; i < _dealerPoints.length; i++) {
+        _pointArray.push(_dealerPoints[i]);
+      }
+      output.append('<div>point:' + _pointArray.join('/') + '</div>');
+      var _dealerMaxPoint = _gameManager.calcMaxHandsValue(_dealer.hand);
+      
+      if(_gameManager.isBurstHands(_gameManager.dealer.hand)) {
+       output.append('<div>バースト！</div>');
+      }
+    ?>
+    <hr>
+    <?
+    //プレイヤー状態
+      var _players = _gameManager.players;
+      for(var i = 0; i < _players.length; i++) {
+        var _player = _players[i];
+        output.append('<div>プレイヤー' + (i+1) + '</div>');
+        output.append('<div>枚数:' + _player.hand.cards.length + '</div>');
+        output.append('<div>');
+        var _array = [];
+        for(var i = 0; i < _player.hand.cards.length; i++) {
+          _array.push(_player.hand.cards[i].nameFull());
+        }
+        output.append(_array.join(' | '));
+        output.append('<div>');
+        var _playerPoints = _gameManager.calcHandsValues(_player.hand);
+        var _pointArray = [];
+        for(var i = 0; i < _playerPoints.length; i++) {
+          _pointArray.push(_playerPoints[i]);
+        }
+        output.append('<div>point:' + _pointArray.join('/') + '</div>');
+        var _playerMaxPoint = _gameManager.calcMaxHandsValue(_player.hand);
+
+       if(_gameManager.isBurstHands(_player.hand)) {
+         output.append('<div>バースト！</div>');
+       }
+       if(getParameter().status == 'stay' || _gameManager.isBurstHands(_player.hand)) {
+         if(_gameManager.isBurstHands(_player.hand)) {
+           output.append('<div>Lose...</div>');        
+         }else if((_dealerMaxPoint < _playerMaxPoint) || (_gameManager.isBurstHands(_gameManager.dealer.hand) && !_gameManager.isBurstHands(_player.hand))) {
+           output.append('<div>Win!！</div>');        
+         } else {
+           output.append('<div>Lose...</div>');        
+         }
+       }
+       //引く
+       if(getParameter().status != 'stay' && !_gameManager.isBurstHands(_player.hand)) {
+         output.append('<a href="https://script.google.com/macros/s/AKfycbz88zJczlJGfaBi0xQY7Pz-cbl6VSkHnUr8BgR9mXCzayY33C10/exec?status=draw&rid=' + getParameter().rid + '">引く</a>');
+       }
+       //引かない
+       if(getParameter().status != 'stay' && !_gameManager.isBurstHands(_player.hand)) {
+         output.append('<a href="https://script.google.com/macros/s/AKfycbz88zJczlJGfaBi0xQY7Pz-cbl6VSkHnUr8BgR9mXCzayY33C10/exec?status=stay&rid=' + getParameter().rid + '">引かない</a>');
+       }
+       output.append('<hr>');        
+     }
+    ?>
+    <hr>
+    <?
+    //つづける
+      if(!_gameManager.isEndCards()) {
+        if(getParameter().status == 'stay' || _gameManager.isBurstHands(_player.hand)) {
+          output.append('<a href="https://script.google.com/macros/s/AKfycbz88zJczlJGfaBi0xQY7Pz-cbl6VSkHnUr8BgR9mXCzayY33C10/exec?status=continue&rid=' + getParameter().rid + '">つづける</a>');
+        }
+      } else {
+        output.append('枚数が少ないので');
+      }
+    ?>
+    <?
+    //リセット
+      output.append('<a href="https://script.google.com/macros/s/AKfycbz88zJczlJGfaBi0xQY7Pz-cbl6VSkHnUr8BgR9mXCzayY33C10/exec?status=start&rid=' + getParameter().rid + '">はじめから</a>');
+    ?>
+  </body>
+</html>
+
+

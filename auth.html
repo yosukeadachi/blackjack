@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.6.1/fingerprint2.min.js"></script>
+  </head>
+  <body>
+  <h1>ブラックジャック</h1>
+  <a id="startGame" href="">はじめる</a>
+  <script type='text/javascript'>
+    window.onload = function(){
+      start();
+    }
+    function start() {
+      var _fingerPrint = new Fingerprint2();
+      _fingerPrint.get(function (result, components) {
+        var _link = document.getElementById("startGame");
+        _link.href = "https://script.google.com/macros/s/AKfycbz88zJczlJGfaBi0xQY7Pz-cbl6VSkHnUr8BgR9mXCzayY33C10/exec?status=start&rid=" + result;
+      });
+    }
+  </script>
+  </body>
+</html>
+
+
